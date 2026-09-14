@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/scheherazade-new": "^5.3.0",
     "@quran.ws/tajwid": "^0.1.0",
     "@quran.ws/tajwid-rules": "^0.1.0",
     "@quran.ws/text": "^0.1.0",
@@ -30,4 +32,3 @@
     "vite": "^8.3.0"
   }
 }
-
