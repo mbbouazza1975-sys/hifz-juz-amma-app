@@ -49,7 +49,7 @@ const content: SurahContent = {
       },
       sens: "Introduit le sujet : l'accoutumance, l'habitude bien ancrée des Quraych.",
       glossary: [
-        { word: "إِيلَٰفِ", meaning: "accoutumance, attachement habituel et sécurisant" },
+        { word: "لِّإِيلَٰفِ", meaning: "accoutumance, attachement habituel et sécurisant" },
         { word: "قُرَيْشٍ", meaning: "Quraych, la tribu du Prophète ﷺ, gardienne de la Kaaba" },
       ],
     },
@@ -63,8 +63,8 @@ const content: SurahContent = {
       sens: "Précise de quelle habitude il s'agit : les deux grandes caravanes commerciales annuelles.",
       glossary: [
         { word: "رِحْلَةَ", meaning: "voyage, expédition (ici : caravane commerciale)" },
-        { word: "ٱلشِّتَآءِ", meaning: "l'hiver — caravane vers le Yémen" },
-        { word: "وَٱلصَّيْفِ", meaning: "et l'été — caravane vers la Sham" },
+        { word: "ࡰ۬لشِّتَآءِ", meaning: "l'hiver — caravane vers le Yémen" },
+        { word: "وَالصَّيْفِ", meaning: "et l'été — caravane vers la Sham" },
       ],
     },
     {
@@ -76,8 +76,8 @@ const content: SurahContent = {
       },
       sens: "Le tournant de la sourate : de ce bienfait découle un ordre clair — adorer Celui qui en est la source.",
       glossary: [
-        { word: "فَلْيَعْبُدُوا۟", meaning: "qu'ils adorent donc (ordre, conséquence directe)" },
-        { word: "رَبَّ هَٰذَا ٱلْبَيْتِ", meaning: "le Seigneur de cette Maison, la Kaaba" },
+        { word: "فَلْيَعْبُدُواْ", meaning: "qu'ils adorent donc (ordre, conséquence directe)" },
+        { word: "رَبَّ هَٰذَا ࡰ۬لْبَيْتِ", meaning: "le Seigneur de cette Maison, la Kaaba" },
       ],
     },
     {
@@ -89,7 +89,7 @@ const content: SurahContent = {
         certainty: "certain",
       },
       sens: "Premier des deux bienfaits rappelés : la nourriture.",
-      glossary: [{ word: "أَطْعَمَهُم", meaning: "les a nourris" }, { word: "جُوعٍۢ", meaning: "la faim" }],
+      glossary: [{ word: "أَطْعَمَهُم", meaning: "les a nourris" }, { word: "جُوعࣲ", meaning: "la faim" }],
     },
     {
       number: 5,
@@ -100,7 +100,7 @@ const content: SurahContent = {
         certainty: "certain",
       },
       sens: "Second bienfait : la sécurité — en écho direct à la protection de la Kaaba dans Al-Fîl.",
-      glossary: [{ word: "وَءَامَنَهُم", meaning: "et les a mis en sécurité" }, { word: "خَوْفٍۭ", meaning: "la peur, la crainte" }],
+      glossary: [{ word: "وَءَامَنَهُم", meaning: "et les a mis en sécurité" }, { word: "خَوْفٍ", meaning: "la peur, la crainte" }],
     },
   ],
 };
