@@ -24,13 +24,32 @@
 //     marques que la source Warsh elle-même place pour indiquer un
 //     allongement ; on colore exactement ce qu'elle annote, rien de plus.
 //
-// Tout le reste (ikhfa, idgham, iqlab, détection contextuelle des noon/
-// tanwin selon la lettre suivante...) est VOLONTAIREMENT absent tant
-// qu'une source de règles vérifiée pour Warsh n'a pas été trouvée —
-// mieux vaut ne rien colorer que colorer faux dans un contexte pédagogique
-// religieux. À rouvrir si une telle source est identifiée.
+// Tout le reste (ikhfa, idgham, iqlab, naql, imâla — règles Warsh
+// spécifiques nécessitant soit un corpus de mots vérifié soit une analyse
+// inter-mots) reste VOLONTAIREMENT absent tant qu'une source vérifiée
+// n'a pas été trouvée et testée — mieux vaut ne rien colorer que colorer
+// faux dans un contexte pédagogique religieux.
+//
+// Ajout du 15 sept 2026 (recherche : sifatusafwa.com, alwalidacademy.com) :
+// tafkhîm/tarqîq. Contrairement à ikhfa/idgham, cette règle est un
+// phénomène phonétique déterministe calculable uniquement à partir des
+// harakât déjà présentes dans le texte source — donc applicable en toute
+// sécurité, comme ghunna/qalqala/madd ci-dessus :
+//   - Lettres toujours emphatiques (mufakhkham) : خ ص ض ط ظ غ ق — tafkhîm
+//     systématique, indépendant du contexte.
+//   - Râ (ر) : tafkhîm si voyelle fatha/damma (propre ou héritée d'une
+//     lettre précédente quand le râ est sukūn) ; tarqîq si voyelle kasra
+//     (propre ou héritée). Cas d'exception avec lettre d'isti'lâ dans le
+//     même mot après un râ sukūn précédé de kasra (ex. قِرْطَاس) : non
+//     géré ici, volontairement laissé non coloré plutôt que risquer une
+//     erreur — à affiner.
 
-export type TajwidCategory = "ghunnah" | "qalqalah" | "madd";
+export type TajwidCategory =
+  | "ghunnah"
+  | "qalqalah"
+  | "madd"
+  | "tafkhim"
+  | "tarqiq";
 
 export interface TajwidCluster {
   text: string;
@@ -41,9 +60,24 @@ const SHADDA = "ّ";
 const SUKUN = "ْ";
 const MADDAH_ABOVE = "ٓ";
 const SUPERSCRIPT_ALEF = "ٰ";
+const FATHA = "َ";
+const DAMMA = "ُ";
+const KASRA = "ِ";
+const TANWIN_FATH = "ً";
+const TANWIN_DAMM = "ٌ";
+const TANWIN_KASR = "ٍ";
 
 const QALQALAH_LETTERS = new Set(["ق", "ط", "ب", "ج", "د"]);
 const GHUNNAH_LETTERS = new Set(["ن", "م"]);
+const ALWAYS_MUFAKHKHAM = new Set(["خ", "ص", "ض", "ط", "ظ", "غ", "ق"]);
+const RA = "ر";
+
+function harakahOf(marks: string[]): "fath" | "damm" | "kasr" | null {
+  if (marks.includes(FATHA) || marks.includes(TANWIN_FATH)) return "fath";
+  if (marks.includes(DAMMA) || marks.includes(TANWIN_DAMM)) return "damm";
+  if (marks.includes(KASRA) || marks.includes(TANWIN_KASR)) return "kasr";
+  return null;
+}
 
 // Lettres "de base" (porteuses), tout le reste est traité comme une marque
 // combinatoire qui s'attache à la lettre de base précédente.
@@ -57,23 +91,35 @@ function isBaseLetter(ch: string): boolean {
  * détermine la catégorie tajwid de chacun, selon les règles ci-dessus. */
 export function analyzeAyahTajwid(text: string): TajwidCluster[] {
   const chars = Array.from(text);
-  const clusters: TajwidCluster[] = [];
+  // Première passe : découpage en clusters {baseLetter, marks[]} bruts.
+  const raw: { baseLetter: string | null; marks: string[] }[] = [];
 
   let i = 0;
   while (i < chars.length) {
     if (!isBaseLetter(chars[i])) {
-      // espace, ponctuation, ou marque orpheline en tête : cluster neutre
-      clusters.push({ text: chars[i], category: null });
+      raw.push({ baseLetter: null, marks: [chars[i]] });
       i++;
       continue;
     }
-
     const baseLetter = chars[i];
     let j = i + 1;
     const marks: string[] = [];
     while (j < chars.length && !isBaseLetter(chars[j])) {
       marks.push(chars[j]);
       j++;
+    }
+    raw.push({ baseLetter, marks });
+    i = j;
+  }
+
+  // Deuxième passe : catégorisation, avec accès au cluster précédent pour
+  // le râ sukūn (qui hérite la voyelle de la lettre qui le précède).
+  const clusters: TajwidCluster[] = [];
+  for (let k = 0; k < raw.length; k++) {
+    const { baseLetter, marks } = raw[k];
+    if (baseLetter === null) {
+      clusters.push({ text: marks[0], category: null });
+      continue;
     }
 
     let category: TajwidCategory | null = null;
@@ -83,10 +129,22 @@ export function analyzeAyahTajwid(text: string): TajwidCluster[] {
       category = "qalqalah";
     } else if (marks.includes(MADDAH_ABOVE) || marks.includes(SUPERSCRIPT_ALEF)) {
       category = "madd";
+    } else if (ALWAYS_MUFAKHKHAM.has(baseLetter)) {
+      category = "tafkhim";
+    } else if (baseLetter === RA) {
+      let h = harakahOf(marks);
+      if (h === null && marks.includes(SUKUN)) {
+        // Râ sukūn : hérite la harakah de la lettre précédente.
+        const prev = raw[k - 1];
+        if (prev && prev.baseLetter !== null) h = harakahOf(prev.marks);
+      }
+      if (h === "fath" || h === "damm") category = "tafkhim";
+      else if (h === "kasr") category = "tarqiq";
+      // h === null (ex. râ final sans marque visible) : laissé non coloré,
+      // par prudence, plutôt que de deviner.
     }
 
     clusters.push({ text: baseLetter + marks.join(""), category });
-    i = j;
   }
 
   return clusters;
