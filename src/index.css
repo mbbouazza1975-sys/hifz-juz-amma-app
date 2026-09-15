@@ -8,11 +8,13 @@
   --border: #e7e2d8;
   --danger: #b3261e;
 
-  /* Palette tajwid (sous-ensemble sûr, voir src/tajwid/README) */
+  /* Palette tajwid (voir src/tajwid/analyze.ts pour la source de chaque règle) */
   --tajwid-qalqalah: #c2410c;
   --tajwid-ghunnah: #0f6b52;
   --tajwid-madd: #7c3aed;
   --tajwid-idghaam: #0369a1;
+  --tajwid-tafkhim: #b91c1c;
+  --tajwid-tarqiq: #2563eb;
 
   --nav-height: 64px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -184,6 +186,14 @@ button {
 .tajwid-madd {
   color: var(--tajwid-madd);
   font-weight: 700;
+}
+.tajwid-tafkhim {
+  color: var(--tajwid-tafkhim);
+  font-weight: 700;
+}
+.tajwid-tarqiq {
+  color: var(--tajwid-tarqiq);
+  font-weight: 600;
 }
 
 .ayah {
