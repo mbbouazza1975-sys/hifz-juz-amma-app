@@ -1,10 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ReciterId } from "../audio/reciters";
+import type { ReciterId, SurahReciterId } from "../audio/reciters";
 
 interface AppState {
   reciterId: ReciterId;
   setReciterId: (id: ReciterId) => void;
+
+  // Mode "verset par verset" (repeat + surlignage, 3 lecteurs vérifiés
+  // everyayah.com) vs "sourate entière" (lecture continue, plus de
+  // lecteurs, source mp3quran.net — voir src/audio/reciters.ts).
+  audioMode: "ayah" | "surah";
+  setAudioMode: (mode: "ayah" | "surah") => void;
+  surahReciterId: SurahReciterId;
+  setSurahReciterId: (id: SurahReciterId) => void;
 
   playbackRate: number;
   setPlaybackRate: (rate: number) => void;
@@ -28,6 +36,11 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       reciterId: "yassin_al_jazaery",
       setReciterId: (id) => set({ reciterId: id }),
+
+      audioMode: "ayah",
+      setAudioMode: (mode) => set({ audioMode: mode }),
+      surahReciterId: "omar_alqazabri",
+      setSurahReciterId: (id) => set({ surahReciterId: id }),
 
       playbackRate: 1,
       setPlaybackRate: (rate) => set({ playbackRate: rate }),
